@@ -5,19 +5,7 @@ https://github.com/vigil1917/AFF-Net?tab=readme-ov-file
 Codes for ICPR2020 paper [Adaptive Feature Fusion Network for Gaze Tracking in Mobile Tablets](https://ieeexplore.ieee.org/abstract/document/9412205/).
 
 
-gazecapture用のコードになっているので、mpiifacegazeように変える必要あり。
-
-
-readerで得られるデータ
-rects
-顔width
-顔height
-顔右上x
-顔右上y
-左目width
-・・・
-
-
+4/26
 ### 学習
 自動でleave-one-person-out学習を行う。
 ```
@@ -29,6 +17,22 @@ bash run.sh train.py config.yaml
 ```
 bash run.sh test.py config.yaml 
 ```
+
+
+savesフォルダにcheckpointとテスト結果あり。
+
+
+
+
+readerで得られるデータ
+rects
+顔width
+顔height
+顔右上x
+顔右上y
+左目width
+・・・
+
 
 
 

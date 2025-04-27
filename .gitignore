@@ -5,3 +5,4 @@ checkpoint/*
 reader/__pycache__
 saves
 __pycache__
+*.log

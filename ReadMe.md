@@ -33,6 +33,7 @@ rects
 左目width
 ・・・
 
+output
 
 
 

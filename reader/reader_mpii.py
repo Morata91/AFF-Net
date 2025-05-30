@@ -44,6 +44,7 @@ class loader(Dataset):
     
     width = 1270
     height = 720
+    # (左上x,y,右下x,y)
     fc = list(map(int, line[10].split(',')))
     lc = list(map(int, line[11].split(',')))
     rc = list(map(int, line[12].split(',')))
@@ -71,9 +72,6 @@ class loader(Dataset):
     fimg = fimg / 255
     fimg = fimg.transpose(2, 0, 1)
  
-    grid = cv2.imread(os.path.join(self.root, grid), 0)
-    grid = np.expand_dims(grid, 0)
-
    
     
     rects = [

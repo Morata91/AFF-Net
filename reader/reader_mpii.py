@@ -3,6 +3,7 @@ import cv2
 import os
 from torch.utils.data import Dataset, DataLoader
 import torch
+import json
 
 def gazeto2d(gaze):
   yaw = np.arctan2(-gaze[0], -gaze[2])
@@ -10,7 +11,7 @@ def gazeto2d(gaze):
   return np.array([yaw, pitch])
 
 class loader(Dataset): 
-  def __init__(self, path, root, header=True):
+  def __init__(self, path, root, header=True): # 軽量化のため、ここでlabelの座標変換を行う必要あり！！
     self.lines = []
     if isinstance(path, list):
       for i in path:
@@ -24,6 +25,18 @@ class loader(Dataset):
         if header: self.lines.pop(0)
 
     self.root = root
+    
+    
+    self.tvecs = {}
+    with open('/home/islabshi/workspace-cloud/koki.murata/datasets/processed/MPII_2d/params.json', 'r') as f:
+      data = json.load(f)
+      for k in data:
+        _tvec = data[k]['tvec']
+        _tvec.pop(1)
+        _tvec = np.array(_tvec).flatten()
+        _tvec = _tvec*np.array([-1,1])   # mpiifacegazeが右上原点のlabelのため、反転
+        self.tvecs[k] = _tvec
+      
 
   def __len__(self):
     return len(self.lines)
@@ -49,9 +62,19 @@ class loader(Dataset):
     lc = list(map(int, line[11].split(',')))
     rc = list(map(int, line[12].split(',')))
 
+
+  
+    ### ここでカメラ原点となるように変更 →ここでやると時間かかるのでだめ。→ここでやる。いうてそんな時間かからんかも。
+    # 座標系は、カメラ中心が原点。被験者から見てxは左に正、yは下に正、zは向かってくる向きに正(スクリーン上は全て0とおく)
+    # パーソンを判別("pxx"のstr型)
+    person = face.split('/')[0]
+    
+    
     label = np.array(point.split(",")).astype("float")
     ratio = np.array(ratio.split(",")).astype("float")
-    label = label*ratio*0.01
+    label = label*ratio
+    label = label + self.tvecs[person]
+    label = label*0.01
     # label = torch.from_numpy(label).type(torch.FloatTensor)
 
     rimg = cv2.imread(os.path.join(self.root, righteye))
